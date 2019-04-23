@@ -114,9 +114,23 @@ def task_10_generator_of_simple_numbers() -> Generator[int, None, None]:
         next(a)
         >>> 3
     """
-    for i in range(2, 201):
-        if all(i % j != 0 for j in range(2, int(math.sqrt(i)) + 1)):
-            yield i
+
+    def primes(limit):
+        if limit > 1:
+            primes_found = [(2, 4)]
+            yield 2
+            for n in range(3, limit + 1, 2):
+                for p, ps in primes_found:
+                    if ps > n:
+                        primes_found.append((n, n * n))
+                        yield n
+                        break
+                    else:
+                        if not n % p:
+                            break
+
+    for i in primes(200):
+        yield (i)
 
 
 def task_11_create_list_of_random_characters() -> List[str]:
