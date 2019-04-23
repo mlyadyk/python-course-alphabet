@@ -114,12 +114,11 @@ def task_10_generator_of_simple_numbers() -> Generator[int, None, None]:
         next(a)
         >>> 3
     """
-
-    def primes(limit):
-        if limit > 1:
+    def generator_of_simple_numbers(x):
+        if x > 1:
             primes_found = [(2, 4)]
             yield 2
-            for n in range(3, limit + 1, 2):
+            for n in range(3, x + 1, 2):
                 for p, ps in primes_found:
                     if ps > n:
                         primes_found.append((n, n * n))
@@ -129,7 +128,7 @@ def task_10_generator_of_simple_numbers() -> Generator[int, None, None]:
                         if not n % p:
                             break
 
-    for i in primes(200):
+    for i in generator_of_simple_numbers(200):
         yield (i)
 
 
