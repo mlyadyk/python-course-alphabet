@@ -19,11 +19,19 @@ def task_1_add_new_record_to_db(con) -> None:
     Returns: 92 records
 
     """
-    with con.cursor() as cursor:
-        cursor.execute("""
-            INSERT INTO Customers (customername, contactname, address, city, postalcode, country)
-            VALUES ('Thomas', 'David', 'Some Address', 'London', '774', 'Singapore')""")
-        con.commit()
+    with con.cursor() as cur:
+        cur.execute("""INSERT INTO Customers(CustomerName,
+                                             ContactName,
+                                             Address,
+                                             City,
+                                             PostalCode,
+                                             Country)
+                       VALUES (%s, %s, %s, %s, %s, %s)""", ('Thomas',
+                                                             'David',
+                                                             'Some Address',
+                                                             'London',
+                                                             '774',
+                                                             'Singapore'))
 
 
 def task_2_list_all_customers(cur) -> list:
@@ -49,7 +57,9 @@ def task_3_list_customers_in_germany(cur) -> list:
 
     Returns: 11 records
     """
-    cur.execute("SELECT * FROM Customers WHERE country='Germany'")
+    cur.execute("""SELECT * 
+                   FROM Customers 
+                   WHERE Country = %s""", ('Germany',))
     return cur.fetchall()
 
 
@@ -62,10 +72,10 @@ def task_4_update_customer(con):
     Returns: 91 records with updated customer
 
     """
-    con.cursor().execute("""UPDATE customers
-                            SET customername = 'Johnny Depp'
-                            WHERE customerid = 1""")
-    con.commit()
+    with con.cursor() as cur:
+        cur.execute("""UPDATE Customers
+                       SET CustomerName = %s
+                       WHERE CustomerID = 1""", ('Johnny Depp',))
 
 
 def task_5_delete_the_last_customer(con) -> None:
@@ -184,13 +194,14 @@ def task_12_list_suppliers_from_specified_countries(cur):
 
     Returns: 8 records
     """
-    cur.execute("""SELECT supplierid,
-                           suppliername,
-                           contactname,
-                           city,
-                           country
-                    FROM suppliers
-                    WHERE country in ('USA', 'UK', 'Japan')""")
+    cur.execute("""SELECT Supplierid,
+                          Suppliername,
+                          Contactname,
+                          City,
+                          Country
+                   FROM Suppliers
+                   WHERE Country IN (%s, %s, %s)""", ('USA', 'UK', 'Japan'))
+
     return cur.fetchall()
 
 
