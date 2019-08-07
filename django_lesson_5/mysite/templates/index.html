@@ -1,0 +1,67 @@
+{% load i18n %}
+
+<form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+    <input name="next" type="hidden" value="{{ redirect_to }}">
+    <select name="language">
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+        {% for language in languages %}
+            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                {{ language.name_local }} ({{ language.code }})
+            </option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Go">
+</form>
+
+<form action="{% url 'index' %}" method="get">
+  <input name="q" type="text" placeholder="Search...">
+</form>
+
+<h1> {% trans 'Привіт' %}!</h1>
+<p> {% trans 'Раді тебе бачити' %}!</p>
+
+{% if user.is_authenticated %}
+    Hi {{ user.username }}
+    {% comment %}
+        <a href="{% url 'profile' %}">Profile</a>
+    {% endcomment %}
+    <a href="{% url 'logout' %}">Logout</a>
+{% else %}
+    You're not logged in
+    <a href="{% url 'login' %}">Login</a>
+    <a href="{% url 'signup' %}">Sign Up</a>
+{% endif %}
+
+
+<h1>{{ page_title }}</h1>
+{% for article in articles %}
+    <a href="{% url 'detail' article.id %}">{{ article.title }}</a>
+    <br>
+    {{ article.description }}
+    <hr>
+{% endfor %}
+
+
+{% if is_paginated %}
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in paginator.page_range %}
+      {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
