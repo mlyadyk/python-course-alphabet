@@ -181,27 +181,3 @@ if __name__ == "__main__":
         cesar1.add_car(car, random.choice(garages))
         cesar2.add_car(car, random.choice(garages))
 
-    print(f' Cesar name is: {cesar1.name}, \n'
-          f'here is a list of garages {cesar1.name} owns: \n {cesar1.garages},\n '
-          f'the id of {cesar1.name} is: {cesar1.register_id} if you are interested \n')
-
-    print("Let's get the information about", cesar1.name, "garage details: \n", cesar1.garages[4], '\n')
-
-    print("Here we will get the price of all cars in the", cesar1.name, "garages. \n"
-          "So the total sum is:", cesar1.hit_hat(), "\n")
-
-    print("Let's check amount of garages", cesar1.name, "has:", cesar1.garages_count(), "\n")
-
-    print(cesar1.name, "has", cesar1.cars_count(), "cars")
-
-    print(cesar1.name, "wants to add their car to the garage, let's see:", cesar1.add_car(cars[2], garages[1]), "\n")
-
-    print(f' Cesar name is: {cesar2.name}, \n'
-          f'here is a list of garages {cesar2.name} owns: \n {cesar2.garages},\n '
-          f'the id of {cesar2.name} is: {cesar2.register_id} if you are interested \n')
-
-    print("Here we will get the price of all cars in the", cesar2.name, "garages. \n"
-          "So the total sum is:", cesar2.hit_hat(), "\n")
-
-    print("Compare if", cesar1.name, "spent more money than", cesar2.name, "-", cesar1.hit_hat() > cesar2.hit_hat())
-    print('TEST ADD CAR', cesar1.add_car(cars[0]))
