@@ -11,7 +11,7 @@ with open('movies.json') as f:
 
 @app.route('/')
 def home_page():
-    return render_template('home.html', title='Home')
+    return render_template('home.html', title='Home', name='Max')
 
 
 @app.route('/movies')
