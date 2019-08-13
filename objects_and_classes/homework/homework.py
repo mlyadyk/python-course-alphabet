@@ -1,10 +1,27 @@
-import random
-import uuid
-from constants import CARS_TYPES, CARS_PRODUCER, TOWNS
-
-
-class Cesar:
-    """Колекціонер має наступні характеристики
+"""
+Вам небхідно написати 3 класи. Колекціонери Гаражі та Автомобілі.
+Звязкок наступний один колекціонер може мати багато гаражів.
+В одному гаражі може знаходитися багато автомобілів.
+Автомобіль має наступні характеристики:
+    price - значення типу float. Всі ціни за дефолтом в одній валюті.
+    type - одне з перечисленних значеннь з CARS_TYPES в docs.
+    producer - одне з перечисленних значеннь в CARS_PRODUCER.
+    number - значення типу UUID. Присвоюється автоматично при створенні автомобілю.
+    mileage - значення типу float. Пробіг автомобіля в кілометрах.
+    Автомобілі можна перівнювати між собою за ціною.
+    При виводі(logs, print) автомобілю повинні зазначатися всі його атрибути.
+    Автомобіль має метод заміни номеру.
+    номер повинен відповідати UUID
+Гараж має наступні характеристики:
+    town - одне з перечислениз значеннь в TOWNS
+    cars - список з усіх автомобілів які знаходяться в гаражі
+    places - значення типу int. Максимально допустима кількість автомобілів в гаражі
+    owner - значення типу UUID. За дефолтом None.
+    Повинен мати реалізованими наступні методи
+    add(car) -> Добавляє машину в гараж, якщо є вільні місця
+    remove(cat) -> Забирає машину з гаражу.
+    hit_hat() -> Вертає сумарну вартість всіх машин в гаражі
+Колекціонер має наступні характеристики
     name - значення типу str. Його ім'я
     garages - список з усіх гаражів які належать цьому Колекціонеру. Кількість гаражів за замовчуванням - 0
     register_id - UUID; Унікальна айдішка Колекціонера.
@@ -14,7 +31,76 @@ class Cesar:
     сars_count() - вертає кількість машиню
     add_car() - додає машину у вибраний гараж. Якщо гараж не вказаний, то додає в гараж, де найбільше вільних місць.
     Якщо вільних місць немає повинне вивести повідомлення про це.
-    Колекціонерів можна порівнювати за ціною всіх їх автомобілів."""
+    Колекціонерів можна порівнювати за ціною всіх їх автомобілів.
+"""
+
+import random
+import uuid
+from constants import CARS_TYPES, CARS_PRODUCER, TOWNS
+
+
+class Car:
+
+    def __init__(self, producer: CARS_PRODUCER, car_type: CARS_TYPES, price: float, mileage: float):
+        self.price = price
+        self.number = uuid.uuid4()
+        self.mileage = mileage
+        self.producer = producer
+        self.car_type = car_type if car_type in CARS_TYPES else None
+
+    def __repr__(self):
+        return 'producer: {self.producer}, type: {self.car_type}, price: {self.price}, ' \
+               'mileage: {self.mileage}, number: {self.number}'.format(self=self)
+
+    def change_number(self):
+        self.number = uuid.uuid4()
+
+    def __lt__(self, other):
+        return self.price < other.price
+
+    def __eq__(self, other):
+        return self.price == other.price
+
+    def __le__(self, other):
+        return self.price <= other.price
+
+    def __ge__(self, other):
+        return self.price >= other.price
+
+    def __gt__(self, other):
+        return self.price > other.price
+
+
+class Garage:
+
+    def __init__(self, cars, places, town: TOWNS, owner=None):
+            self.town = town if town in TOWNS else None
+            self.cars = cars
+            self.places = places
+            self.owner = owner if owner else uuid.uuid4()
+
+    def __repr__(self):
+        return 'town: {self.town}, car: {self.cars}, place: {self.places}, ownerid: {self.owner}'.format(self=self)
+
+    def add_car(self, car: Car):
+        if len(self.cars) < self.places:
+            self.cars.append(car)
+            return f'Car was added to garage: {self.town}'
+
+    def free_places(self):
+        return self.places - len(self.cars)
+
+    def remove_car(self, car: Car):
+        self.cars.remove(car)
+
+    def hit_hat(self):
+        sum_car = 0
+        for car in self.cars:
+            sum_car = sum_car + car.price
+        return sum_car
+
+class Cesar:
+
 
     def __init__(self, name: str, garages=[]):
         self.name = name
@@ -49,7 +135,7 @@ class Cesar:
                 if garage.free_places() >= maximum:
                     maximum = garage.free_places()
                     max_garage = garage
-            return max_garage.add_car(car) if garage else 'no free places found'
+            return max_garage.add_car(car) if garage else 'no free space'
         else:
             return garage.add_car(car)
 
@@ -69,89 +155,9 @@ class Cesar:
         return self.hit_hat() == other.hit_hat()
 
 
-class Car:
-    """Автомобіль має наступні характеристики:
-    price - значення типу float. Всі ціни за дефолтом в одній валюті.
-    type - одне з перечисленних значеннь з CARS_TYPES в docs.
-    producer - одне з перечисленних значеннь в CARS_PRODUCER.
-    number - значення типу UUID. Присвоюється автоматично при створенні автомобілю.
-    mileage - значення типу float. Пробіг автомобіля в кілометрах.
-    Автомобілі можна перівнювати між собою за ціною.
-    При виводі(logs, print) автомобілю повинні зазначатися всі його атрибути.
-    Автомобіль має метод заміни номеру.
-    номер повинен відповідати UUID
-"""
-    def __init__(self, producer: CARS_PRODUCER, car_type: CARS_TYPES, price: float, mileage: float):
-        self.price = price
-        self.number = uuid.uuid4()
-        self.mileage = mileage
-        self.producer = producer
-        self.car_type = car_type if car_type in CARS_TYPES else None
-
-    def __repr__(self):
-        return 'producer: {self.producer}, type: {self.car_type}, price: {self.price}, ' \
-               'mileage: {self.mileage}, number: {self.number}'.format(self=self)
-
-    def change_number(self):
-        self.number = uuid.uuid4()
-
-    def __lt__(self, other):
-        return self.price < other.price
-
-    def __eq__(self, other):
-        return self.price == other.price
-
-    def __le__(self, other):
-        return self.price <= other.price
-
-    def __ge__(self, other):
-        return self.price >= other.price
-
-    def __gt__(self, other):
-        return self.price > other.price
-
-
-class Garage:
-    """Гараж має наступні характеристики:
-    town - одне з перечислениз значеннь в TOWNS
-    cars - список з усіх автомобілів які знаходяться в гаражі
-    places - значення типу int. Максимально допустима кількість автомобілів в гаражі
-    owner - значення типу UUID. За дефолтом None.
-    Повинен мати реалізованими наступні методи
-    add(car) -> Добавляє машину в гараж, якщо є вільні місця
-    remove(cat) -> Забирає машину з гаражу.
-    hit_hat() -> Вертає сумарну вартість всіх машин в гаражі
-"""
-    def __init__(self, cars, places, town: TOWNS, owner=None):
-            self.town = town if town in TOWNS else None
-            self.cars = cars
-            self.places = places
-            self.owner = owner if owner else uuid.uuid4()
-
-    def __repr__(self):
-        return 'town: {self.town}, car: {self.cars}, place: {self.places}, ownerid: {self.owner}'.format(self=self)
-
-    def add_car(self, car: Car):
-        if len(self.cars) < self.places:
-            self.cars.append(car)
-            return f'Car was added to garage: {self.town}'
-
-    def free_places(self):
-        return self.places - len(self.cars)
-
-    def remove_car(self, car: Car):
-        self.cars.remove(car)
-
-    def hit_hat(self):
-        sum_car = 0
-        for car in self.cars:
-            sum_car = sum_car + car.price
-        return sum_car
-
-
 if __name__ == "__main__":
     cesar_id = uuid.uuid4()
-    print("Let's define id of cesar: ", cesar_id)
+    print("id of cesar: ", cesar_id)
     print(" ")
 
     garages = []
@@ -165,8 +171,8 @@ if __name__ == "__main__":
         )
         garages.append(garage)
 
-    cesar1 = Cesar('Rich', garages)
-    cesar2 = Cesar('Super Rich', garages)
+    cesar1 = Cesar('Tom', garages)
+    cesar2 = Cesar('James', garages)
 
     cars = []
     for _ in range(10):
